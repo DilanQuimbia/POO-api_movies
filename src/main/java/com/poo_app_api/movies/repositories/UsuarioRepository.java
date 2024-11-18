@@ -6,10 +6,15 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
-    // Busca de usuario por email
-    // @Query nativa
-    @Query(value = "SELECT * FROM usuarios WHERE email_User = :email",nativeQuery= true)
-    // Puede devolver algo como no
+
+     //Opción 1: Spring Data JPA genera automáticamente consultas SQL con palabras clave (convenciones predefinidas)
     Optional<Usuario> findByEmail(String email);
+
+//    // Opción 2: Consulta SQL
+//    // Busca usuario por medio del email
+//    // @Query nativa
+//    @Query(value = "SELECT * FROM usuarios WHERE email_User = :email",nativeQuery= true)
+//    // Opcional: Devuelve un usuario
+//    Optional<Usuario> findByEmail(String email);
 }
 

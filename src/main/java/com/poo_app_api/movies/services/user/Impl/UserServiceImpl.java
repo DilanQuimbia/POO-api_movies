@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+//Contiene la lógica de los métodos creados en la interfaz UserServie
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
