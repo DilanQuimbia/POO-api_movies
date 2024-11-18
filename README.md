@@ -12,6 +12,8 @@ Dependencias
 [![MySQL Driver](https://img.shields.io/badge/MySQL%20Driver-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mvnrepository.com/artifact/mysql/mysql-connector-java)
 [![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-data-jpa)
 [![Spring Boot DevTools](https://img.shields.io/badge/Spring%20Boot%20DevTools-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://docs.spring.io/spring-boot/docs/current/reference/html/using.html#using.devtools)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
 
 #
 ### Consideración
@@ -23,4 +25,5 @@ Dependencias
 - Spring boot 3.3.5
 #
 ### Referencias
-https://www.youtube.com/watch?v=J9OiXcTuzak&ab_channel=GOGODEV
+- https://www.youtube.com/watch?v=J9OiXcTuzak&ab_channel=GOGODEV
+- https://youtu.be/Qu3soRF168I?si=FUGBZFL4_Srpqq1f
