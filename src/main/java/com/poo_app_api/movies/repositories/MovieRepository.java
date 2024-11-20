@@ -8,5 +8,6 @@ public interface MovieRepository extends JpaRepository<Movie,Long> {
     // Repositorio: Conjunto de utilidades para trabajar sobre nuestro modelo
     // Utilizando el MovieRepository podemos acceder a todo el conjunto de funcionalidades del JPA en la entidad Movie: Busqueda, borrado..
     // Enlaza las funciones y entidades
-    // Podemos declarar métodos adicionales en este apartado que no incluya en JPARpository
+    boolean existsByTitulo(String titulo);
+    boolean existsByTituloAndIdNot(String titulo, Long id);
 }

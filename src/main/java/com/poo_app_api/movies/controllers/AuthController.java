@@ -23,7 +23,14 @@ public class AuthController {
 
     @PostMapping("/register")
     private ResponseEntity<ResponseDTO> addUser(@RequestBody Usuario user) throws Exception {
-        return new ResponseEntity<>(authService.register(user), HttpStatus.OK);
+        ResponseDTO response = authService.register(user);
+
+        // Si hay errores, devuelve un status 400 (Bad Request)
+        if(response.getNumOfErrors() >0){
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        // Si no hay errores, devuleve un status 201 (Created)
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

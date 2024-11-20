@@ -2,6 +2,7 @@ package com.poo_app_api.movies.controllers;
 // Parte orquestadora; mapea peticiones a las diferentes rutas
 // Encargada de gestionar las peticiones que nos van llegando
 
+import com.poo_app_api.movies.dtos.ResponseDTO;
 import com.poo_app_api.movies.models.Movie;
 import com.poo_app_api.movies.repositories.MovieRepository;
 import com.poo_app_api.movies.services.movie.MovieService;
@@ -47,6 +48,7 @@ public class MovieController {
     // @RequestBody: Recoge los datos de
     public ResponseEntity<Movie> createMovie(@RequestBody Movie movie){
         Movie savedMovie = movieService.createMovie(movie);
+        // Si no hay errores, devuelve status 201 (CREATED)
         return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
     }
 

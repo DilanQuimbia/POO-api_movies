@@ -1,5 +1,6 @@
 package com.poo_app_api.movies.services.movie;
 
+import com.poo_app_api.movies.dtos.ResponseDTO;
 import com.poo_app_api.movies.models.Movie;
 
 import java.util.List;

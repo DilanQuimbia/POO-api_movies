@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -59,21 +60,25 @@ public class AuthServiceImpl implements AuthService {
 
 
             if (response.getNumOfErrors() > 0){
-                return response;
+                return response; // Regresa directamente el DTO con los errores
             }
-            // List en esta parte
+
+            /*
             List<Usuario> getAllUsers = usuarioRepository.findAll();
+            // Valida si el usuario ya existe
             for (Usuario repeatFields : getAllUsers) {
-                if (repeatFields != null) {
-                    response.setMessage("Usuario ya existe!");
-                    return response;
-                }
+             */
+
+            if (usuarioRepository.findByEmail(user.getEmail()).isPresent()) {
+                response.setNumOfErrors(1);
+                response.addError("Usuario","Ya existe!");
+                return response;
             }
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
             user.setPassword(encoder.encode(user.getPassword()));
             usuarioRepository.save(user);
-            response.setMessage("Usuario creado exitosamente!");
+            response.addError("Usuario","Creado exitosamente!");
             return response;
         } catch (Exception e) {
             throw new Exception(e.getMessage());

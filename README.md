@@ -27,3 +27,4 @@ Dependencias
 ### Referencias
 - https://www.youtube.com/watch?v=J9OiXcTuzak&ab_channel=GOGODEV
 - https://youtu.be/Qu3soRF168I?si=FUGBZFL4_Srpqq1f
+- https://medium.com/@amandaravelocabrera/spring-framework-vi-control-de-excepciones-en-controladores-spring-boot-e0efc6f32770
