@@ -17,7 +17,7 @@ import java.util.Optional;
 // Especificar que la clase es un controlador, destinado a resolver peticiones y devolver en formato APIRest
 @RestController
 // Tipo de ruta que controla este controlador
-@RequestMapping("/api/movies")
+@RequestMapping("/api")
 public class MovieController {
     // Evita tener que generar objetos para resolver las peticiones
     @Autowired
@@ -26,14 +26,14 @@ public class MovieController {
 
     // Listas todas las movies
     @CrossOrigin // Permite realizar peticiones desde otras aplicaciones
-    @GetMapping
+    @GetMapping(value= "/listMovies", headers = "Accept=application/json")
     public List<Movie> getAllMovies() {
         return movieService.getAllMovies();
     }
 
     // Visualizar una película
     @CrossOrigin // Permite realizar peticiones desde otras aplicaciones
-    @GetMapping("/{id}")
+    @GetMapping(value= "/movie/{id}", headers = "Accept=application/json")
     // ResponseEntity<Movie>:Devuelve un estado, si es verdadero, devuelve un tipo de dato movie
     // PathVariable Long id: // Argumento ID se obtiene del encabezado
     public ResponseEntity<Movie> getMovieById(@PathVariable Long id){
@@ -42,7 +42,7 @@ public class MovieController {
 
     // Crear Película
     @CrossOrigin // Permite realizar peticiones desde otras aplicaciones
-    @PostMapping
+    @PostMapping(value="/newMovie", headers = "Accept=application/json")
     // Se devuelve un "ResponseEntity<Movie>" que indica que la operación se realizó con éxito
     // Una vez creado un elemento nuevo, se devuelve los datos en consola
     // @RequestBody: Recoge los datos de
@@ -54,7 +54,7 @@ public class MovieController {
 
     // Eliminar Película
     @CrossOrigin // Permite realizar peticiones desde otras aplicaciones
-    @DeleteMapping("/deleteMovie/{id}")
+    @DeleteMapping(value="/deleteMovie/{id}", headers = "Accept=application/json")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);
         // Retorna: No existe ya el contenido
@@ -63,7 +63,7 @@ public class MovieController {
 
     // Actualizar película
     @CrossOrigin // Permite realizar peticiones desde otras aplicaciones
-    @PutMapping("/{id}")
+    @PutMapping(value="updateMovie/{id}", headers = "Accept=application/json")
     public ResponseEntity<Movie> UpdateMovie(@PathVariable Long id,@RequestBody Movie updateM){
         Movie updateMovie = movieService.updateMovie(id, updateM);
         return ResponseEntity.ok(updateMovie);

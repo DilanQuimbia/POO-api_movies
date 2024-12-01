@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Service
@@ -19,15 +20,17 @@ public class JWTUtilityServiceImpl implements JWTUtilityService {
     private long jwtExpiration;
 
     private SecretKey getSigningKey() {
+        // Conversión de String a bytes consistentes en diferentes plataformas y configuraciones
+        byte[] KeyBytes = this.secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     // Genera un token JWT firmado con SHA256
     @Override
-    public String generateJWT(Long userId) {
+    public String generateJWT(String userName) {
         Date now = new Date();
         return Jwts.builder()
-                .setSubject(userId.toString())  // Usa el userId correctamente
+                .setSubject(userName)  // Usa el userId correctamente
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + jwtExpiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)  // Usa HMAC SHA-256

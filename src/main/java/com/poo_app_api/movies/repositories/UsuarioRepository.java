@@ -9,6 +9,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario,Long> {
 
      //Opción 1: Spring Data JPA genera automáticamente consultas SQL con palabras clave (convenciones predefinidas)
     Optional<Usuario> findByEmail(String email);
+    Optional<Usuario> findByUsername(String username);
 
 //    // Opción 2: Consulta SQL
 //    // Busca usuario por medio del email

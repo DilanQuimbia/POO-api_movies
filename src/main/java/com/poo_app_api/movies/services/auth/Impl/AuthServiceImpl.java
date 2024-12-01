@@ -2,7 +2,9 @@ package com.poo_app_api.movies.services.auth.Impl;
 
 import com.poo_app_api.movies.dtos.LoginDTO;
 import com.poo_app_api.movies.dtos.ResponseDTO;
+import com.poo_app_api.movies.models.Role;
 import com.poo_app_api.movies.models.Usuario;
+import com.poo_app_api.movies.repositories.RoleRepository;
 import com.poo_app_api.movies.repositories.UsuarioRepository;
 import com.poo_app_api.movies.services.Validation.UserValidation;
 import com.poo_app_api.movies.services.auth.AuthService;
@@ -11,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -28,18 +27,21 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserValidation userValidation;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
     public HashMap<String, String> login(LoginDTO loginRequest) throws Exception {
         try {
             HashMap<String, String> jwt = new HashMap<>();
-            Optional<Usuario> user = usuarioRepository.findByEmail(loginRequest.getEmail());
+            Optional<Usuario> user = usuarioRepository.findByUsername(loginRequest.getUserName());
 
             if (user.isEmpty()) {
                 jwt.put("error", "Usuario no registrado!");
                 return jwt;
             }
             if (verifyPassword(loginRequest.getPassword(), user.get().getPassword())) {
-                jwt.put("jwt", jwtUtilityService.generateJWT(user.get().getId()));
+                jwt.put("jwt", jwtUtilityService.generateJWT(user.get().getUsername()));
             } else {
                 jwt.put("error", "Autenticación fallida");
             }
@@ -69,10 +71,17 @@ public class AuthServiceImpl implements AuthService {
             for (Usuario repeatFields : getAllUsers) {
              */
 
-            if (usuarioRepository.findByEmail(user.getEmail()).isPresent()) {
+            if (usuarioRepository.findByUsername(user.getUsername()).isPresent()) {
                 response.setNumOfErrors(1);
                 response.addError("Usuario","Ya existe!");
                 return response;
+            }
+
+            // Asigna el rol por defecto si no se especifica
+            if (user.getRole() == null || user.getRole().isEmpty()) {
+                // Busca el rol "Cliente" en la base de datos
+                Role defaultRole = roleRepository.findByName("Cliente").orElseThrow(() -> new Exception("Rol Cliente no encontrado"));
+                user.setRole(Set.of(defaultRole));
             }
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);

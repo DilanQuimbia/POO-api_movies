@@ -1,5 +1,6 @@
 package com.poo_app_api.movies.security;
 
+import com.poo_app_api.movies.services.auth.Impl.CustomeUserDetailsService;
 import com.poo_app_api.movies.services.auth.Impl.JWTUtilityServiceImpl;
 import com.poo_app_api.movies.services.auth.JWTUtilityService;
 import io.jsonwebtoken.Claims;
@@ -9,17 +10,24 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
+@Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
     JWTUtilityService jwtUtilityService;
+    @Autowired
+    private CustomeUserDetailsService customeUserDetailsService;
 
     public JWTAuthorizationFilter(JWTUtilityServiceImpl jwtUtilityService) {
         this.jwtUtilityService = jwtUtilityService;
@@ -39,7 +47,15 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
         try{
             Claims claims = jwtUtilityService.parseJWT(token);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(claims.getSubject(), null, Collections.emptyList());
+
+            String username = claims.getSubject();
+
+            UserDetails userDetails = customeUserDetailsService.loadUserByUsername(username);
+
+            List<String> userRoles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         } catch (Exception e) {
             throw new RuntimeException(e);
