@@ -1,7 +1,6 @@
 package com.poo_app_api.movies.security;
 
 import com.poo_app_api.movies.services.auth.Impl.CustomeUserDetailsService;
-import com.poo_app_api.movies.services.auth.Impl.JWTUtilityServiceImpl;
 import com.poo_app_api.movies.services.auth.JWTUtilityService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,47 +22,50 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    private JWTUtilityService jwtUtilityService;
+    private JWTUtilityService jwtUtilityService; // Inyecta sevicio encargado de manejar jwt: creación, validación, obtención de claims
 
     @Autowired
-    private CustomeUserDetailsService customeUserDetailsService;  // Inyectamos el servicio de detalles de usuario
+    private CustomeUserDetailsService customeUserDetailsService;  // Inyectamos el servicio de detalles de usuario (username)
 
     @Autowired
-    private JWTAuthorizationFilter jwtAuthorizationFilter;
+    private JWTAuthorizationFilter jwtAuthorizationFilter; // Inyecta el filtro de autorización que maneja la validación del token JWT en cada solicitud
 
-    @Bean
+    // Se configura las reglas de seguridad para las solicitudes Http entrantes
+    @Bean // Para que Spring lo getione
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf ->
-                        csrf.disable()
+                        csrf.disable() // Con JWT no es necesario la protección CRF
                         )
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/listMovies").hasAnyAuthority("ROLE_Cliente","ROLE_Admin")
-                                .requestMatchers(HttpMethod.GET,"/api/movie/{id}").hasAnyAuthority("ROLE_Cliente", "ROLE_Admin")
-                                .requestMatchers(HttpMethod.POST,"/api/newMovie").hasAuthority("ROLE_Admin")
+                                .requestMatchers("/auth/**").permitAll() // Accesos libre a todos los endpoints que comeinzan con "/auth/"
+                                .requestMatchers(HttpMethod.GET,"/api/listMovies").hasAnyAuthority("ROLE_Cliente","ROLE_Admin") // Permite acceso a usuario Cliente o Admin
+                                .requestMatchers(HttpMethod.GET,"/api/movie/{id}").hasAnyAuthority("ROLE_Cliente", "ROLE_Admin") // Permite acceso a usuario Cliente o Admin
+                                .requestMatchers(HttpMethod.POST,"/api/newMovie").hasAuthority("ROLE_Admin") // Solo para Admin
                                 .requestMatchers(HttpMethod.DELETE,"/api/deleteMovie/{id}").hasAuthority("ROLE_Admin") // Solo para Admin
                                 .requestMatchers(HttpMethod.PUT,"/api/updateMovie/{id}").hasAuthority("ROLE_Admin") // Solo para Admin
                                 .anyRequest().authenticated() // Los demás requieren autenticación
                 )
                 .sessionManagement(sessionManager ->
                         sessionManager
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                // Cuando se accede a una endpoints protegido y no tenga autorización: 401
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //  Con JWT, no se utiliza sesiones; Manejo de sesiones sin estado
+                )
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class) // Se anñade primero el filtro JWT y después el filtro de autenticación predeterminado de Spring
+                // En un endpoint protegido que un usuario no tenga acceso: error 401
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
-                                .authenticationEntryPoint((request, response, authException) -> {
-                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "No autorizado");
+                                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
+                                    response.getWriter().write("Acceso denegado");
                                 }))
-                .build();
+                .build(); // Construye y devuelve la configuración de seguridad
 
 
     }
-
+    // Este método define el encoder de contraseñas utilizado para cifrar las contraseñas de los usuarios
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // Utiliza el algoritmo BCrypt para cifrar y verificar contraseñas
     }
 }

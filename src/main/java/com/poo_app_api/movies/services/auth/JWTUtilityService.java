@@ -8,6 +8,9 @@ public interface JWTUtilityService {
     // Método para generar un token JWT firmado con SHA256 usando el UserName de usuario
     String generateJWT(String userName);
 
-    // Método para parsear el JWT y obtener los claims
+    // Método para Obtener los claims del Token
     Claims parseJWT(String token);
+
+    // Método para verificar un token válido
+    Boolean validarJWT(String token);
 }

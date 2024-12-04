@@ -65,7 +65,7 @@ public class GlobalException {
         error.setStatus(HttpStatus.NOT_FOUND.value());
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(error);
     }
-    // Creted: título ya registrado: 500
+    // Creted: título ya registrado: 409
     @ExceptionHandler(MovieAlreadyExistsException.class)
     public ResponseEntity<ErrorDTO> handleMovieAlreadyExists(MovieAlreadyExistsException ex) {
         ErrorDTO error = new ErrorDTO();
@@ -75,15 +75,15 @@ public class GlobalException {
         error.setStatus(HttpStatus.CONFLICT.value());
         return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(error); // Código 409: Conflicto
     }
-    // id: no conecta a una película:
+    // id: no conecta a una película: 404
     @ExceptionHandler(MovieNotFoundException.class)
     public ResponseEntity<ErrorDTO> handleMovieNotFound(MovieNotFoundException ex) {
         ErrorDTO error = new ErrorDTO();
         error.setDate(new Date());
-        error.setError("La película no existe");
+        error.setError("Película no encontrada");
         error.setMessage(ex.getMessage());
-        error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(error);
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(error);
     }
 
     // Validación de datos en campos: 400
@@ -95,5 +95,17 @@ public class GlobalException {
         error.setMessage(ex.getMessage());
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    // Maneja excepciones JwtValidationException
+    @ExceptionHandler(JwtValidationException.class)
+    public ResponseEntity<ErrorDTO> handleJwtValidationException(JwtValidationException ex) {
+        // Crear un objeto ErrorDTO para estructurar la respuesta de error
+        ErrorDTO error = new ErrorDTO();
+        error.setDate(new Date());
+        error.setError("Autenticación fallida");
+        error.setMessage(ex.getMessage());  // Mensaje específico de la excepción
+        error.setStatus(HttpStatus.UNAUTHORIZED.value());  // 401 Unauthorized
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 }
