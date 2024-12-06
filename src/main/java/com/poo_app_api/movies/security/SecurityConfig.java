@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -15,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -36,10 +39,13 @@ public class SecurityConfig {
         return http
                 .csrf(csrf ->
                         csrf.disable() // Con JWT no es necesario la protección CRF
-                        )
+                )
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 .requestMatchers("/auth/**").permitAll() // Accesos libre a todos los endpoints que comeinzan con "/auth/"
+                                .requestMatchers("/v3/api-docs").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/swagger-config").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/listMovies").hasAnyAuthority("ROLE_Cliente","ROLE_Admin") // Permite acceso a usuario Cliente o Admin
                                 .requestMatchers(HttpMethod.GET,"/api/movie/{id}").hasAnyAuthority("ROLE_Cliente", "ROLE_Admin") // Permite acceso a usuario Cliente o Admin
                                 .requestMatchers(HttpMethod.POST,"/api/newMovie").hasAuthority("ROLE_Admin") // Solo para Admin
@@ -54,11 +60,18 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class) // Se anñade primero el filtro JWT y después el filtro de autenticación predeterminado de Spring
                 // En un endpoint protegido que un usuario no tenga acceso: error 401
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
-                                    response.getWriter().write("Acceso denegado");
-                                }))
+                        exceptionHandling.accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().write("""
+            {
+                "message": "Acceso denegado",
+                "error": "No tienes permiso para realizar esta acción",
+                "status": 403
+            }
+        """);
+                        })
+                )
                 .build(); // Construye y devuelve la configuración de seguridad
 
 

@@ -79,18 +79,18 @@ public class MovieServiceImpl implements MovieService {
         movieRepository.deleteById(id);
     }
 
-    @Override
-    public Movie voteMovie(Long id, double rating) {
-        Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> new MovieNotFoundException("Película no encontrada con id: "+ id));
-
-        // Actualizar promedio de calificación
-        int totalVotes = movie.getVotos();
-        double newRating = ((movie.getRating() * totalVotes) + rating) / (totalVotes + 1);
-
-        movie.setRating(newRating);
-        movie.setVotos(totalVotes + 1);
-
-        return movieRepository.save(movie);
-    }
+//    @Override
+//    public Movie voteMovie(Long id, double rating) {
+//        Movie movie = movieRepository.findById(id)
+//                .orElseThrow(() -> new MovieNotFoundException("Película no encontrada con id: "+ id));
+//
+//        // Actualizar promedio de calificación
+//        int totalVotes = movie.getVotos();
+//        double newRating = ((movie.getRating() * totalVotes) + rating) / (totalVotes + 1);
+//
+//        movie.setRating(newRating);
+//        movie.setVotos(totalVotes + 1);
+//
+//        return movieRepository.save(movie);
+//    }
 }
