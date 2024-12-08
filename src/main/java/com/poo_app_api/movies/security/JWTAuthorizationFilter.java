@@ -10,8 +10,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,6 +33,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     JWTUtilityService jwtUtilityService;
     @Autowired
     private CustomeUserDetailsService customeUserDetailsService;
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     public JWTAuthorizationFilter(JWTUtilityServiceImpl jwtUtilityService) {
         this.jwtUtilityService = jwtUtilityService;
@@ -72,14 +76,14 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (JwtValidationException e) {
-            // Si el token es inválido o ha expirado
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  // 401 Unauthorized
-            response.getWriter().write(e.getMessage());
+            // Si el token es inválido o ha expiado
+            SecurityContextHolder.clearContext(); // Limpia el contexto de seguridad
+            jwtAuthenticationEntryPoint.commence(request, response, new AuthenticationException(e.getMessage(), e) {});
             return;
         } catch (Exception e) {
-            // Manejo de cualquier otro error
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);  // 500 Internal Server Error
-            response.getWriter().write("Error interno del servidor: " + e.getMessage());
+            // Manejo de cualquiero otro error
+            SecurityContextHolder.clearContext();
+            jwtAuthenticationEntryPoint.commence(request, response, new AuthenticationException("Error inesperado durante la autenticación", e) {});
             //e.printStackTrace(); // Solo para depuar en desarrollo
             return;
         }

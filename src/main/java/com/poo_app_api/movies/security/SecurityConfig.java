@@ -29,9 +29,16 @@ public class SecurityConfig {
 
     @Autowired
     private CustomeUserDetailsService customeUserDetailsService;  // Inyectamos el servicio de detalles de usuario (username)
-
+    // INyección por campo
     @Autowired
     private JWTAuthorizationFilter jwtAuthorizationFilter; // Inyecta el filtro de autorización que maneja la validación del token JWT en cada solicitud
+    // Inyección por constructor (recomendada)
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    @Autowired
+    public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
+        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+    }
+
 
     // Se configura las reglas de seguridad para las solicitudes Http entrantes
     @Bean // Para que Spring lo getione
@@ -58,19 +65,20 @@ public class SecurityConfig {
                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //  Con JWT, no se utiliza sesiones; Manejo de sesiones sin estado
                 )
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class) // Se anñade primero el filtro JWT y después el filtro de autenticación predeterminado de Spring
-                // En un endpoint protegido que un usuario no tenga acceso: error 401
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                            response.getWriter().write("""
+                        exceptionHandling
+                                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // Uso de AuthenticacionEntryPoint (manej de error 401: autenticación)
+                                .accessDeniedHandler((request, response, accessDeniedException) -> { // Manejo de error 403: Usuario no autorizado para acceder a un endpoint específico
+                                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                                    response.getWriter().write("""
             {
                 "message": "Acceso denegado",
                 "error": "No tienes permiso para realizar esta acción",
                 "status": 403
             }
         """);
-                        })
+                                })
                 )
                 .build(); // Construye y devuelve la configuración de seguridad
 
