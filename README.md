@@ -33,3 +33,4 @@ Dependencias
 - https://github.com/LeoOlivaresD/Spring-Security-JWT.git
 - https://medium.com/@emauricioh7/swagger-spring-boot-3-63bc4942e76e
 - https://github.com/UnProgramadorNaceOfficial/swagger-docs-spring.git
+- https://github.com/latecnologiaavanza/pruebas-unitarias-spring-boot.git
