@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -29,6 +30,7 @@ public class UsuarioRespositoryTests {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    //@SpyBean //Permite instancias un mock parcial de un bean que posea las "implementaciones reales"
     private Usuario usuario;
 
     // Se ejecuta antes de cada método
@@ -54,9 +56,9 @@ public class UsuarioRespositoryTests {
         usuario.setRole(roles);
     }
 
-    @DisplayName("Test para guardar Usuario")
+    @DisplayName("Test para registrar Usuario")
     @Test
-    void testNewUsuario(){
+    void when_userIsCreated_expect_userToBeSavedSuccessfully(){
         // Metodología BDD(Estratgia de desarrollo; Cómo se implementa la funcionalidad)
         // Given(Dado):condición previa o configucarión
         // Given: Crear roles
@@ -73,12 +75,10 @@ public class UsuarioRespositoryTests {
         usuario1.setUsername("DilanAC");
         usuario1.setEmail("dilanflores.21@gmail.com");
         usuario.setPassword(passwordEncoder.encode("DF_1727d"));
-
         Set<Role> roles = new HashSet<>();
         roles.add(roleCliente);
         roles.add(roleAdmin);
         usuario1.setRole(roles);
-
         // When(Cuando): Acción o comportamiento que vamos a probar
         Usuario usuarioGuardado = usuarioRepository.save(usuario1);
         // Then(Entonces): Verificar la salida
@@ -97,21 +97,23 @@ public class UsuarioRespositoryTests {
 //        }
     }
 
-    @DisplayName("Iniciar sesión usuario")
+    @DisplayName("Test para Iniciar sesión usuario")
     @Test
-    void testLogin(){
+    void when_userIslogsin_expect_userToLogInSuccessfully(){
         //Given
         usuarioRepository.save(usuario);
         //When
         Optional<Usuario> usuarioOptional = usuarioRepository.findByUsername(usuario.getUsername());
         //Then
-        if (usuarioOptional.isPresent()) {
-            Usuario usuarioEncontrado = usuarioOptional.get();
-            assertThat(passwordEncoder.matches("DF_1727d", usuarioEncontrado.getPassword())).isTrue();
-            System.out.println("Usuario autenticado correctamente");
-        } else {
-            System.out.println("Usuario no encontrado o credenciales incorrectas");
-        }
+        assertThat(usuarioOptional).isPresent();
+        assertThat(passwordEncoder.matches("DF_1727d", usuarioOptional.get().getPassword())).isTrue();
+//        if (usuarioOptional.isPresent()) {
+//            Usuario usuarioEncontrado = usuarioOptional.get();
+//            assertThat(passwordEncoder.matches("DF_1727d", usuarioEncontrado.getPassword())).isTrue();
+//            System.out.println("Usuario autenticado correctamente");
+//        } else {
+//            System.out.println("Usuario no encontrado o credenciales incorrectas");
+//        }
     }
 
 }

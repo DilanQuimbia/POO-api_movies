@@ -34,3 +34,4 @@ Dependencias
 - https://medium.com/@emauricioh7/swagger-spring-boot-3-63bc4942e76e
 - https://github.com/UnProgramadorNaceOfficial/swagger-docs-spring.git
 - https://github.com/latecnologiaavanza/pruebas-unitarias-spring-boot.git
+- https://medium.com/somos-pragma/buenas-pr%C3%A1cticas-y-recomendaciones-para-tus-pruebas-unitarias-con-spring-boot-7bd7b7861119
