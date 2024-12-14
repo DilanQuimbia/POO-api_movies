@@ -37,7 +37,7 @@ public class UsuarioRespositoryTests {
     @BeforeEach
     void setup(){
         Role roleCliente = new Role();
-        roleCliente.setId(1L); // Este ID debe coincidir con lo que tienes en la base de datos si ya están predefinidos
+        roleCliente.setId(1L);
         roleCliente.setName("ROLE_Admin");
 
         Role roleAdmin = new Role();
