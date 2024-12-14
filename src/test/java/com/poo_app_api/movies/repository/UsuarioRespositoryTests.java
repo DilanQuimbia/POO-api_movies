@@ -74,7 +74,7 @@ public class UsuarioRespositoryTests {
         usuario1.setNombre("Dilan Flores");
         usuario1.setUsername("DilanAC");
         usuario1.setEmail("dilanflores.21@gmail.com");
-        usuario.setPassword(passwordEncoder.encode("DF_1727d"));
+        usuario1.setPassword(passwordEncoder.encode("DF_1727d"));
         Set<Role> roles = new HashSet<>();
         roles.add(roleCliente);
         roles.add(roleAdmin);
@@ -84,7 +84,14 @@ public class UsuarioRespositoryTests {
         // Then(Entonces): Verificar la salida
         assertThat(usuarioGuardado).isNotNull();
         assertThat(usuarioGuardado.getId()).isGreaterThan(0);
+        assertThat(usuarioGuardado.getNombre()).isEqualTo("Dilan Flores");
+        assertThat(usuarioGuardado.getUsername()).isEqualTo("DilanAC");
+        assertThat(usuarioGuardado.getEmail()).isEqualTo("dilanflores.21@gmail.com");
+        assertThat(usuarioGuardado.getPassword()).isNotNull();
+        assertThat(usuarioGuardado.getRole()).isNotEmpty();
+        assertThat(usuarioGuardado.getRole()).containsExactlyInAnyOrder(roleCliente, roleAdmin);
 
+//
 //        Optional<Usuario> usuarioOptional = usuarioRepository.findById(usuarioGuardado.getId());
 //        if (usuarioOptional.isPresent()) {
 //            System.out.println(usuarioOptional.get().getNombre());
