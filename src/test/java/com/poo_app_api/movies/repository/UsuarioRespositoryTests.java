@@ -2,6 +2,7 @@ package com.poo_app_api.movies.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.poo_app_api.movies.config.TestConfig;
 import com.poo_app_api.movies.models.Role;
 import com.poo_app_api.movies.models.Usuario;
 import com.poo_app_api.movies.repositories.UsuarioRepository;
@@ -10,8 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

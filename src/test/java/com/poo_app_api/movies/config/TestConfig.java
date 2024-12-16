@@ -1,4 +1,4 @@
-package com.poo_app_api.movies.repository;
+package com.poo_app_api.movies.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

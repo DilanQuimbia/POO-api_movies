@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import com.poo_app_api.movies.config.TestConfig;
 import com.poo_app_api.movies.dtos.LoginDTO;
 import com.poo_app_api.movies.dtos.ResponseDTO;
 import com.poo_app_api.movies.models.Role;
