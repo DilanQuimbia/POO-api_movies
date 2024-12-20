@@ -18,6 +18,9 @@ public class MovieServiceImpl implements MovieService {
     @Autowired
     MovieRepository movieRepository;
 
+    @Autowired
+    MovieValidation movieValidation;
+
     @Override
     public List<Movie> getAllMovies(){
         return movieRepository.findAll();
@@ -31,7 +34,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public Movie createMovie(Movie movie){
-        ResponseDTO response = MovieValidation.validateMovie(movie);
+        ResponseDTO response = movieValidation.validateMovie(movie);
 
         boolean titleExists = movieRepository.existsByTitulo(movie.getTitulo());
         if (titleExists) {
@@ -53,7 +56,7 @@ public class MovieServiceImpl implements MovieService {
                 .orElseThrow(()-> new MovieNotFoundException("Película no encontrada con id: "+ id));
 
         // Validar los datos
-        ResponseDTO response = MovieValidation.validateMovie(updateM);
+        ResponseDTO response = movieValidation.validateMovie(updateM);
         if(response.getNumOfErrors()> 0){
             throw new InvalidMovieDataException(response.getErrors().toString());
         }

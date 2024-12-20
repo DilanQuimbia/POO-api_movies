@@ -2,12 +2,13 @@ package com.poo_app_api.movies.services.Validation;
 
 import com.poo_app_api.movies.dtos.ResponseDTO;
 import com.poo_app_api.movies.models.Movie;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-
+@Service
 public class MovieValidation {
 
-    public static ResponseDTO validateMovie(Movie movie) {
+    public ResponseDTO validateMovie(Movie movie) {
 
         ResponseDTO response = new ResponseDTO();
         response.setNumOfErrors(0);
