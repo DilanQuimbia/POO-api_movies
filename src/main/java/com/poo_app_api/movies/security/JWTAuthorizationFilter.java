@@ -30,15 +30,15 @@ import java.util.List;
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
-    JWTUtilityService jwtUtilityService;
+    private JWTUtilityService jwtUtilityService;
     @Autowired
     private CustomeUserDetailsService customeUserDetailsService;
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-    public JWTAuthorizationFilter(JWTUtilityServiceImpl jwtUtilityService) {
-        this.jwtUtilityService = jwtUtilityService;
-    }
+//    public JWTAuthorizationFilter(JWTUtilityServiceImpl jwtUtilityService) {
+//        this.jwtUtilityService = jwtUtilityService;
+//    }
     // Maneja solicitud entrante, respuesta saliente, mecanismo para invocar el siguiente filtro
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

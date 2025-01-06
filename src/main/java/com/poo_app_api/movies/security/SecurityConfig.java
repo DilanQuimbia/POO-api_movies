@@ -29,10 +29,10 @@ public class SecurityConfig {
 
     @Autowired
     private CustomeUserDetailsService customeUserDetailsService;  // Inyectamos el servicio de detalles de usuario (username)
-    // INyección por campo
+    // Inyección por campo
     @Autowired
     private JWTAuthorizationFilter jwtAuthorizationFilter; // Inyecta el filtro de autorización que maneja la validación del token JWT en cada solicitud
-    // Inyección por constructor (recomendada)
+    // Inyección por constructor
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
     public SecurityConfig(JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
