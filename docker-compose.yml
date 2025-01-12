@@ -1,0 +1,52 @@
+services:
+  Apimovies:
+    image: movies
+    container_name: movies_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-network
+    depends_on:
+      - mysql
+    env_file:
+      - .env  # Esto carga las variables desde el archivo .env
+    environment:
+      - DB_URL=${DB_URL}
+      - DB_USER_NAME=${DB_USER_NAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - EXPIRATION=${EXPIRATION}
+      - FRONTEND_URL=${FRONTEND_URL}
+
+
+  mysql:
+    image: mysql:8.0.33
+    container_name: mysql_database
+    env_file:
+      - .env
+    environment:
+      MYSQ_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE} # No se modifica la BDD local
+#      MYSQL_USER: ${MYSQL_USER} # Para ejecutar la BDD local dentro del contenedor; Crear nuevo usuario con permisos de acceso
+#      MYSQL_PASSWORD: ${MYSQL_PASSWORD} #
+    ports:
+      - "3307:3306"
+    networks:
+      - spring-network
+    volumes:
+      - mysql-volume:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 10s
+      retries: 10
+networks:
+  spring-network:
+volumes:
+  mysql-volume:
+#    driver: bridge
+
+
+
